@@ -1,17 +1,10 @@
 <?php
 
-$db_host = "localhost";
-$db_name = 'cms';
-$db_user = 'alexis';
-$db_pass = 'V[Ixvtpj[CSC6HOX';
+include 'includes/database.php';
 
-$conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
-
-  if(mysqli_connect_error()) {
-    echo mysqli_connect_error();
-    exit;
-  }
   echo "You are connected <br>";
+
+  if(is_numeric($_GET['id'])&& isset($_GET['id'])){
 
   $sql = "SELECT * FROM article WHERE id = " . $_GET['id'];
 
@@ -21,22 +14,13 @@ $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
     echo mysqli_error($conn);
   } else {
     $article = mysqli_fetch_assoc($results);
-  }
+  } 
+}else {
+  $article = null;
+}
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My blog</title>
-    <meta charset="utf-8">
-</head>
-<body>
-
-    <header>
-        <h1>My blog</h1>
-    </header>
-
-    <main>
+<?php require 'includes/header.php'; ?>
         <?php if ($article === null): ?>
             <p>No articles found.</p>
         <?php else: ?>
@@ -47,6 +31,4 @@ $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
                 </article>
             </ul>
         <?php endif; ?>
-    </main>
-</body>
-</html>
+<?php require 'includes/footer.php'; ?>
