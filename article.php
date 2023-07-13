@@ -1,21 +1,15 @@
 <?php
 
-include 'includes/database.php';
+require 'includes/database.php';
+require 'includes/article.php';
 
-  echo "You are connected <br>";
+  $conn = getDB();
 
-  if(is_numeric($_GET['id'])&& isset($_GET['id'])){
+  if(isset($_GET['id'])){
 
-  $sql = "SELECT * FROM article WHERE id = " . $_GET['id'];
+  $article = getArticle($conn, $_GET['id']);
 
-  $results = mysqli_query($conn, $sql);
-
-  if($results === false){
-    echo mysqli_error($conn);
-  } else {
-    $article = mysqli_fetch_assoc($results);
-  } 
-}else {
+} else {
   $article = null;
 }
 ?>
@@ -24,11 +18,14 @@ include 'includes/database.php';
         <?php if ($article === null): ?>
             <p>No articles found.</p>
         <?php else: ?>
-            <ul>
-                <article>
-                    <h2><?= $article['title']; ?></h2>
-                    <p><?= $article['content']; ?></p>
-                </article>
-            </ul>
+
+          <article>
+            <h2><?= htmlspecialchars($article['title']); ?></h2>
+            <p><?= htmlspecialchars($article['content']); ?></p>
+          </article>
+
+          <a href="edit-article.php?id=<?= $article['id']; ?>">Edit</a>
+          <a href="delete-article.php?id=<?= $article['id']; ?>">Delete</a>
+           
         <?php endif; ?>
 <?php require 'includes/footer.php'; ?>
