@@ -10,22 +10,18 @@
  */
 function getArticle($conn, $id, $columns = '*'){
 
-  $sql = "SELECT $columns FROM article WHERE id = ?";
+  $sql = "SELECT $columns FROM article WHERE id = :id";
 
-  $stmt = mysqli_prepare($conn, $sql);
+  $stmt = $conn ->prepare($sql);
 
-  if($stmt === false){
-    echo mysqli_error($conn);
-  } else {
-    mysqli_stmt_bind_param($stmt, 'i', $id);
+    $stmt -> bindValue(':id', $id, PDO::PARAM_INT);
 
-    if(mysqli_stmt_execute($stmt)){
-      $result = mysqli_stmt_get_result($stmt);
+    if($stmt ->execute()){
 
-      return mysqli_fetch_array($result, MYSQLI_ASSOC);
+      return $stmt->fetch(PDO::FETCH_ASSOC);
     }
   }
-}
+
 
   /**
    * Validate the article properties
