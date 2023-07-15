@@ -1,6 +1,12 @@
 <?php
-
 /**
+ * URL
+ * 
+ * Response methods
+ */
+class Url 
+{
+  /**
  * Redirect to another URL on the same site
  * 
  * @param string $path The path to redirect to
@@ -8,7 +14,7 @@
  * @return void
  */
 
-function redirectUrl($path){
+public static function redirectUrl($path){
     if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
       $protocol = 'https';
     } else {
@@ -16,4 +22,5 @@ function redirectUrl($path){
     } 
     header("Location: $protocol://" . $_SERVER['HTTP_HOST']. $path);
     exit;
+}
 }

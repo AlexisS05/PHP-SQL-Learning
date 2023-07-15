@@ -1,43 +1,44 @@
 <?php
 
-require 'classes/Database.php';
-require 'classes/Article.php';
-require 'classes/Auth.php';
+require 'includes/init.php';
 
-session_start();
+$conn = require 'includes/db.php';
 
-  $db = new Database();
-  $conn = $db ->getConn();
+$paginator = new Paginator($_GET['page'] ??  1, 4 );
+ 
+$articles = Article::getPage($conn, $paginator->limit, $paginator->offset);
 
-  $articles = Article::getAll($conn);
 ?>
-
 <?php require 'includes/header.php'; ?>
 
-<?php if(Auth::isLoggedIn()): ?>
-  
-  <p>You are logged in! <a href="logout.php">Log out</a></p>
-  <p><a href="new-article.php">New article</a></p>
-  
+<?php if (empty($articles)): ?>
+  <p>No articles found.</p>
 <?php else: ?>
+    <ul>
+      <?php foreach ($articles as $article): ?>
+        <li>
+          <article>
+            <h2><a href="article.php?id=<?= $article['id']; ?>"><?= htmlspecialchars($article['title']); ?></a></h2>
+            <p><?= htmlspecialchars($article['content']); ?></p>
+          </article>
+        </li>
+      <?php endforeach; ?>
+    </ul>
 
-  <p>You are not logged in. <a href="login.php">Log in</a></p>
-
+    <nav>
+      <ul>
+        <li>
+          <?php if($paginator->previous): ?>
+            <a href="?page=<?= $paginator->previous; ?>">Previous</a>
+          <?php else: ?>
+            Previous
+          <?php endif; ?>
+        </li>
+        <li>
+          <a href="?page=<?= $paginator->next; ?>">Next</a>
+        </li>
+      </ul>
+    </nav>
 <?php endif; ?>
-
-      <?php if (empty($articles)): ?>
-            <p>No articles found.</p>
-        <?php else: ?>
-            <ul>
-                <?php foreach ($articles as $article): ?>
-                    <li>
-                        <article>
-                            <h2><a href="article.php?id=<?= $article['id']; ?>"><?= htmlspecialchars($article['title']); ?></a></h2>
-                            <p><?= htmlspecialchars($article['content']); ?></p>
-                        </article>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        <?php endif; ?>
 
 <?php require 'includes/footer.php'; ?>
